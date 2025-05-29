@@ -5,7 +5,7 @@
 이 프로젝트는 카드 고객의 시계열 거래 데이터와 정적 메타 데이터를 기반으로, 6개월째 이탈 여부(`churn`)를 예측하는 LSTM 기반 모델입니다.
 
 ---
-
+```
 ## 구성 파일
 .
 ├── main.py # 전체 학습 및 실행 스크립트
@@ -15,7 +15,7 @@
 ├── inference_module.py # 저장된 모델을 활용한 예측 및 Attention 시각화 v0
 ├── processed_time_series.csv # 월별 고객 시계열 데이터
 ├── meta_merged.csv # 고객별 정적 정보 및 이탈 여부
-
+```
 ## 실행 방법
 ```bash
 python train.py
