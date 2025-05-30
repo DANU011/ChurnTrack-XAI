@@ -26,11 +26,9 @@ python train.py
 
 ### 1. `processed_time_series.csv`
 - 고객 ID별 월 단위 시계열 거래 특성 포함
-- 컬럼 예시: `customer_id`, `month`, `feature1`, `feature2`, ...
 
 ### 2. `meta_merged.csv`
 - 고객별 정적 속성 (성별, 연령, 카드 등급 등) 및 `churn` 레이블 포함
-- 모든 메타 특성은 이미 원-핫 인코딩된 상태
 
 ---
 
