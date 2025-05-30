@@ -39,7 +39,8 @@ def create_dataloaders(time_series_df, meta_df, batch_size=64, window_size=6, sp
     train_size = int(split_ratio[0] * total_size)
     val_size = int(split_ratio[1] * total_size)
     test_size = total_size - train_size - val_size
-
+    
+    generator = torch.Generator().manual_seed(42) # 분할 seed 고정
     train_set, val_set, test_set = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
 
     meta_info = {
