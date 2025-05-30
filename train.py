@@ -133,7 +133,6 @@ def train_model(config, time_series_df, meta_df, save_suffix):
     }
 
 
-
 if __name__ == "__main__":
     config = {
         'time_data_path': 'processed_time_series.csv',
