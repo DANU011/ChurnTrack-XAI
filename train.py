@@ -38,6 +38,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
     save_path = ""
     shap_path = ""
     result_path = ""
+    attention_path = ""
 
     history = []
 
@@ -63,16 +64,20 @@ def train_model(config, time_series_df, meta_df, save_suffix):
         # Validation
         model.eval()
         y_true, y_pred = [], []
+        attention_list = []
+
         with torch.no_grad():
             for x_seq, x_meta, y in val_loader:
                 x_seq, x_meta = x_seq.to(device), x_meta.to(device)
-                output, _ = model(x_seq, x_meta)
+                output, attention = model(x_seq, x_meta)
                 y_true.extend(y.tolist())
                 y_pred.extend(output.squeeze().cpu().tolist())
 
                 shap_x_seq.append(x_seq.cpu().numpy())
                 shap_x_meta.append(x_meta.cpu().numpy())
                 shap_y.extend(y.cpu().numpy())
+
+                attention_list.append(attention.cpu().numpy())
 
         y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]
         auc = roc_auc_score(y_true, y_pred)
@@ -101,16 +106,18 @@ def train_model(config, time_series_df, meta_df, save_suffix):
                 y=np.array(shap_y)
             )
             shap_path = f"shap_input_{save_suffix}.npz"
-            print(f"[Saved] SHAP input saved: shap_input_{save_suffix}.npz")
+            print(f"[Saved] SHAP input saved: {shap_path}")
 
-            # 예측 결과 저장
             result_path = f"val_preds_{save_suffix}.csv"
             with open(result_path, "w", newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(['y_true', 'y_pred'])
                 writer.writerows(zip(y_true, y_pred))
-
             print(f"[Saved] Validation predictions to: {result_path}")
+
+            attention_path = f"attention_{save_suffix}.npy"
+            np.save(attention_path, np.concatenate(attention_list, axis=0))
+            print(f"[Saved] Attention weights saved to: {attention_path}")
 
     log_path = f"train_log_{save_suffix}.csv"
     pd.DataFrame(history).to_csv(log_path, index=False)
@@ -121,8 +128,10 @@ def train_model(config, time_series_df, meta_df, save_suffix):
         'best_auc': best_auc,
         'log_path': log_path,
         'val_pred_path': result_path,
-        'shap_input_path': shap_path
+        'shap_input_path': shap_path,
+        'attention_path': attention_path
     }
+
 
 
 if __name__ == "__main__":
