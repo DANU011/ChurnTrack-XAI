@@ -27,8 +27,16 @@ def train_model(config, time_series_df, meta_df, save_suffix):
     #     cache_path=f"cached_dataset_{save_suffix}.npz"  # Added support for caching
     # )
 
+    # train_loader, val_loader, _, meta_info = create_stratified_dataloaders(
+    #     cache_path=f"cached_dataset_201807_201812.npz", # 캐시 파일 고정
+    #     batch_size=config.get('batch_size', 64)
+    # )
+
     train_loader, val_loader, _, meta_info = create_stratified_dataloaders(
-        cache_path=f"cached_dataset_201807_201812.npz", # 캐시 파일 고정
+        time_series_df=time_series_df,
+        meta_df=meta_df,
+        window_size=config['window_size'],
+        cache_path=f"cached_dataset_{save_suffix}.npz",
         batch_size=config.get('batch_size', 64)
     )
 
@@ -55,7 +63,8 @@ def train_model(config, time_series_df, meta_df, save_suffix):
         mode='max',  # AUC 높을수록 좋은 경우
         factor=0.5,  # lr 감소 비율
         patience=5,  # 5번 연속 향상 없으면 감소
-        verbose=True  # 출력 로그 활성화
+        verbose=True,  # 출력 로그 활성화
+        min_lr = 1e-6
     )
 
     best_auc = 0
@@ -92,6 +101,10 @@ def train_model(config, time_series_df, meta_df, save_suffix):
             for x_seq, x_meta, y in val_loader:
                 x_seq, x_meta = x_seq.to(device), x_meta.to(device)
                 output, attention = model(x_seq, x_meta)
+
+                # Attention weight 확인
+                # print("Attention mean (val):", attention.mean().item())
+
                 y_true.extend(y.tolist())
                 y_pred.extend(output.squeeze().cpu().tolist())
 
@@ -161,14 +174,14 @@ def train_model(config, time_series_df, meta_df, save_suffix):
 
 if __name__ == "__main__":
     config = {
-        'time_data_path': 'time_expanded_features_filtered.csv',
+        'time_data_path': 'time_sample_filtered.csv',
         'meta_data_path': 'meta_merged_balanced.csv',
         'save_path': 'best_churn_model.pth',
         'window_size': 5,
         'stride': 1,
         'hidden_dim': 64,
-        'lr': 1e-3,
-        'epochs': 100,
+        'lr': 1e-2,
+        'epochs': 150,
         'cnn_out_channels': 64,
         'kernel_size': 3
     }
@@ -211,6 +224,13 @@ if __name__ == "__main__":
         label_df = meta_all[['customer_id', 'churn']].drop_duplicates()
         meta_feats = meta_all.drop(columns=['churn']).drop_duplicates()
         meta_df = pd.merge(label_df, meta_feats, on='customer_id', how='inner')
+
+        # 5.5) 이탈/비이탈 1:1 비율로 언더샘플링
+        churn_1 = meta_df[meta_df['churn'] == 1]
+        churn_0 = meta_df[meta_df['churn'] == 0].sample(n=len(churn_1), random_state=42)
+
+        meta_df = pd.concat([churn_1, churn_0], axis=0).sample(frac=1, random_state=42)
+        time_series_df = time_series_df[time_series_df['customer_id'].isin(meta_df['customer_id'])]
 
         # 6) 학습 실행
         # 실행 시각을 기준으로 고유한 suffix 생성

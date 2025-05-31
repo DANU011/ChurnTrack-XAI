@@ -91,38 +91,55 @@ def preprocess_and_save_dataset(time_series_df, meta_df, window_size=5, save_pat
     )
     print(f"Saved cached dataset to {save_path}")
 
-def create_cached_dataloaders(cache_path, batch_size=64, split_ratio=(0.7, 0.15, 0.15)):
-    data = np.load(cache_path)
-    x_seq = torch.from_numpy(data['x_seq'])
-    x_meta = torch.from_numpy(data['x_meta'])
-    y = torch.from_numpy(data['y'])
+# def create_cached_dataloaders(cache_path, batch_size=64, split_ratio=(0.7, 0.15, 0.15)):
+#     data = np.load(cache_path)
+#     x_seq = torch.from_numpy(data['x_seq'])
+#     x_meta = torch.from_numpy(data['x_meta'])
+#     y = torch.from_numpy(data['y'])
+#
+#     dataset = torch.utils.data.TensorDataset(x_seq, x_meta, y)
+#
+#     total_size = len(dataset)
+#     train_size = int(split_ratio[0] * total_size)
+#     val_size = int(split_ratio[1] * total_size)
+#     test_size = total_size - train_size - val_size
+#
+#     generator = torch.Generator().manual_seed(42)
+#     train_set, val_set, test_set = torch.utils.data.random_split(
+#         dataset, [train_size, val_size, test_size], generator=generator
+#     )
+#
+#     meta_info = {
+#         'num_features': x_seq.shape[2],
+#         'meta_dim': x_meta.shape[1],
+#     }
+#
+#     return (
+#         DataLoader(train_set, batch_size=batch_size, shuffle=True),
+#         DataLoader(val_set, batch_size=batch_size, shuffle=False),
+#         DataLoader(test_set, batch_size=batch_size, shuffle=False),
+#         meta_info
+#     )
 
-    dataset = torch.utils.data.TensorDataset(x_seq, x_meta, y)
 
-    total_size = len(dataset)
-    train_size = int(split_ratio[0] * total_size)
-    val_size = int(split_ratio[1] * total_size)
-    test_size = total_size - train_size - val_size
+def create_stratified_dataloaders(
+    time_series_df=None,
+    meta_df=None,
+    window_size=5,
+    cache_path=None,
+    batch_size=64,
+    split_ratio=(0.7, 0.15, 0.15)
+):
+    assert cache_path is not None, "cache_path must be provided."
 
-    generator = torch.Generator().manual_seed(42)
-    train_set, val_set, test_set = torch.utils.data.random_split(
-        dataset, [train_size, val_size, test_size], generator=generator
-    )
+    # 캐시 파일 없으면 생성
+    if not os.path.exists(cache_path):
+        if time_series_df is None or meta_df is None:
+            raise ValueError("No cached file found and raw data not provided.")
+        print(f"[INFO] Saving dataset to cache at {cache_path}")
+        preprocess_and_save_dataset(time_series_df, meta_df, window_size, cache_path)
 
-    meta_info = {
-        'num_features': x_seq.shape[2],
-        'meta_dim': x_meta.shape[1],
-    }
-
-    return (
-        DataLoader(train_set, batch_size=batch_size, shuffle=True),
-        DataLoader(val_set, batch_size=batch_size, shuffle=False),
-        DataLoader(test_set, batch_size=batch_size, shuffle=False),
-        meta_info
-    )
-
-
-def create_stratified_dataloaders(cache_path, batch_size=64, split_ratio=(0.7, 0.15, 0.15)):
+    print(f"[INFO] Loading cached dataset from {cache_path}")
     data = np.load(cache_path)
     x_seq = data['x_seq']
     x_meta = data['x_meta']
@@ -136,7 +153,7 @@ def create_stratified_dataloaders(cache_path, batch_size=64, split_ratio=(0.7, 0
     # stratified split (val vs test)
     val_ratio = split_ratio[1] / (split_ratio[1] + split_ratio[2])
     x_seq_val, x_seq_test, x_meta_val, x_meta_test, y_val, y_test = train_test_split(
-        x_seq_temp, x_meta_temp, y_temp, test_size=(1 - val_ratio), stratify=y_temp, random_state=42
+        x_seq_temp, x_meta_temp, y_temp, test_size=(1 - val_ratio), stratify=y_temp, random_state=36
     )
 
     # 텐서 변환
@@ -162,5 +179,4 @@ def create_stratified_dataloaders(cache_path, batch_size=64, split_ratio=(0.7, 0
         DataLoader(test_set, batch_size=batch_size, shuffle=False),
         meta_info
     )
-
 

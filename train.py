@@ -69,6 +69,10 @@ def train_model(config, time_series_df, meta_df, save_suffix):
             for x_seq, x_meta, y in val_loader:
                 x_seq, x_meta = x_seq.to(device), x_meta.to(device)
                 output, attention = model(x_seq, x_meta)
+
+                # Attention weight 확인
+                print("Attention mean (val):", attention.mean().item())
+
                 y_true.extend(y.tolist())
                 y_pred.extend(output.squeeze().cpu().tolist())
 
@@ -133,14 +137,14 @@ def train_model(config, time_series_df, meta_df, save_suffix):
 
 if __name__ == "__main__":
     config = {
-        'time_data_path': 'time_expanded_features_filtered.csv',
+        'time_data_path': 'time_sample_filtered.csv',
         'meta_data_path': 'meta_merged_balanced.csv',
         'save_path': 'best_churn_model.pth',
         'window_size': 5,
         'stride': 1,
         'hidden_dim': 64,
         'lr': 1e-3,
-        'epochs': 200,
+        'epochs': 150,
         'cnn_out_channels': 64,
         'kernel_size': 3
     }

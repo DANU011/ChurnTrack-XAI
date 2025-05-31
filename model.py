@@ -19,5 +19,4 @@ class BiLSTM_CNN_Attention(nn.Module):
         meta_out = torch.relu(self.meta_fc(x_meta))
         concat = torch.cat([attn_out, meta_out], dim=1)
         logits = self.classifier(concat)
-        output = torch.sigmoid(logits)
-        return output, attn_weights
+        return logits, attn_weights
