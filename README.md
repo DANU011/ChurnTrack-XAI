@@ -92,8 +92,11 @@ SHAP / IG 해석 도구는 모든 모델 실험 후 `.pth` 모델 가중치를 �
 
 실험 목적에 맞는 `train_*.py` 스크립트를 사용하고,  
 내부에서 참조하는 모델과 데이터로더를 위 표에 맞게 조정하십시오.
+> 예시:  
+> Meta-aware Attention 실험을 하려면 `train_customer_id.py`에서  
+> `model_meta_aware_attention.py`와 `attention_module_meta_aware_attention.py`를 불러오도록 수정합니다.
 
-### 모델 아키텍쳐
+### 추가 모델 아키텍쳐
 Meta-aware Attention 모델 구조
 ```bash
 (Time-series) → BiLSTM → CNN ─────────────┐
@@ -117,11 +120,9 @@ Gating 구조 모델
 시계열 전용 모델 (Seq-only)
 ```bash
 (Time-series) → BiLSTM → CNN → Attention → FC → churn probability
-
-> 예시:  
-> Meta-aware Attention 실험을 하려면 `train_customer_id.py`에서  
-> `model_meta_aware_attention.py`와 `attention_module_meta_aware_attention.py`를 불러오도록 수정합니다.
 ```
+
+
 
 ## 실행 환경
 아래 파일을 통해 본 프로젝트의 의존성 및 실행 환경을 확인할 수 있습니다:
