@@ -76,8 +76,16 @@ python train.py
 - Validation 전체 평균 attention 시각화
 - 출력: `attention_heatmap_*.png`
 
-## 실행 환경
+## 모델 조합 가이드
+| 실험 유형                | 훈련 스크립트                | 모델 정의 파일                        | 어텐션 모듈                                     | 데이터로더 파일                 |
+| -------------------- | ---------------------- | ------------------------------- | ------------------------------------------ | ------------------------ |
+| 기본 모델                | `train_customer_id.py` | `model.py`                      | `attention_module.py`                      | `dataloader.py`          |
+| Meta-aware Attention | `train_customer_id.py` | `model_meta_aware_attention.py` | `attention_module_meta_aware_attention.py` | `dataloader.py`          |
+| Gating 구조 실험         | `train_customer_id.py` | `model_gating.py`               | (내장 또는 기본 어텐션 사용)                          | `dataloader.py`          |
+| 시계열만 사용 (Seq-only)   | `train_seq_only.py`    | `model_seq_only.py`             | (어텐션 없음 또는 기본 어텐션)                         | `dataloader_seq_only.py` |
 
+
+## 실행 환경
 아래 파일을 통해 본 프로젝트의 의존성 및 실행 환경을 확인할 수 있습니다:
 
 - [`requirements.txt`](./정규화 적용 버전/requirements.txt)  
