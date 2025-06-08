@@ -17,6 +17,7 @@
 ├── inference_module.py # 저장된 모델을 활용한 예측 및 Attention 시각화 v0
 ├── processed_time_series.csv # 월별 고객 시계열 데이터
 ├── meta_merged.csv # 고객별 정적 정보 및 이탈 여부
+├── requirements.txt # 프로젝트 실행 환경의 Python 패키지 목록
 ```
 ## 실행 방법
 ```bash
@@ -74,4 +75,25 @@ python train.py
 ### Attention Heatmap (`train.py`)
 - Validation 전체 평균 attention 시각화
 - 출력: `attention_heatmap_*.png`
+
+## 실행 환경
+
+아래 파일을 통해 본 프로젝트의 의존성 및 실행 환경을 확인할 수 있습니다:
+
+- [`requirements.txt`](./정규화 적용 버전/requirements.txt)  
+  → 주요 패키지:
+  - `torch==2.5.1+cu121`
+  - `torchvision==0.20.1+cu121`
+  - `torchaudio==2.5.1+cu121`
+  - `shap==0.47.2`
+  - `captum==0.8.0`
+  - `scikit-learn==1.6.1`
+  - `matplotlib==3.9.4`
+  - `pandas==2.2.3`
+  - `numpy==1.26.4`
+
+> 본 프로젝트는 **CUDA 12.1** 환경에서 실행되었으며, PyTorch는 `+cu121` 빌드를 사용합니다.
+> `nvidia-smi` 기준 GPU 드라이버 버전은 **535.113 이상**을 권장합니다.
+
+
 ---
