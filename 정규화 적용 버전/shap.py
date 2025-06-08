@@ -9,8 +9,6 @@ import os
 # ──────────────────────────────────────
 # 1. 폰트 설정 (한글 대응)
 font_path = "fonts/NanumGothicCoding-2.0/나눔고딕코딩.ttf"
-if not os.path.exists(font_path):
-    font_path = "/home/danu/deep/fonts/NanumGothicCoding-2.0/나눔고딕코딩.ttf"
 fm.fontManager.addfont(font_path)
 plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
 plt.rcParams['axes.unicode_minus'] = False
