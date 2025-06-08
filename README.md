@@ -50,7 +50,7 @@ python train.py
 ## 정규화 및 전처리 적용 사항
 - bool 타입 → float 변환
 - 결측값 보간: 시계열은 ffill + 0 대체, 메타는 중간값 대체
-- 메타 임베딩에 대한 L2 정규화 항 추가 (meta_reg_lambda
+- 메타 임베딩에 대한 L2 정규화 항 추가 (meta_reg_lambda)
 
 ## XAI 기능 구성
 
