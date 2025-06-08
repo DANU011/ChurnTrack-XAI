@@ -96,8 +96,6 @@ SHAP / IG 해석 도구는 모든 모델 실험 후 `.pth` 모델 가중치를 �
 ### 모델 아키텍쳐
 Meta-aware Attention 모델 구조
 ```bash
-복사
-편집
 (Time-series) → BiLSTM → CNN ─────────────┐
                                           ↓
                       (Meta features) → FC (ReLU)
@@ -109,10 +107,6 @@ Meta-aware Attention 모델 구조
 
 Gating 구조 모델
 ```bash
-
-bash
-복사
-편집
 (Time-series) → BiLSTM → CNN → TS Representation ─────┐
                                                       ↓
          (Meta features) → FC (ReLU) → Gating Layer ──┘
@@ -122,8 +116,6 @@ bash
 
 시계열 전용 모델 (Seq-only)
 ```bash
-복사
-편집
 (Time-series) → BiLSTM → CNN → Attention → FC → churn probability
 
 > 예시:  
