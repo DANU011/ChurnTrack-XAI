@@ -1,4 +1,3 @@
-# train_v1.py (또는 사용 중인 훈련 스크립트)
 import numpy as np
 import pandas as pd
 import torch
@@ -19,25 +18,17 @@ import matplotlib.font_manager as fm
 import random
 
 font_path = "fonts/NanumGothicCoding-2.0/나눔고딕코딩.ttf"
-if not os.path.exists(font_path):
-    font_path = "/home/danu/deep/fonts/NanumGothicCoding-2.0/나눔고딕코딩.ttf"
 fm.fontManager.addfont(font_path)
 font_name = fm.FontProperties(fname=font_path).get_name()
 plt.rcParams['font.family'] = font_name
 plt.rcParams['axes.unicode_minus'] = False
 
-
-# ① 파이썬 내장 random 모듈 시드 고정
 random.seed(42)
-# ② NumPy 시드 고정
 np.random.seed(42)
-# ③ PyTorch CPU 시드 고정
 torch.manual_seed(42)
-# ④ PyTorch GPU 시드 고정 (CUDA가 사용 가능한 경우)
 if torch.cuda.is_available():
     torch.cuda.manual_seed(42)
-    torch.cuda.manual_seed_all(42)   # 멀티 GPU 환경이라면
-# ⑤ PyTorch 연산 결과를 좀 더 결정론적으로 만들고 싶다면
+    torch.cuda.manual_seed_all(42)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
@@ -65,7 +56,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
     meta_numeric_cols = [c for c in meta_num_cols if c not in ['churn', 'customer_id']]
     print(f">>> meta_numeric_cols (총 {len(meta_numeric_cols)}개): {meta_numeric_cols}")
 
-    # 1) DataLoader: (cid, x_seq, x_meta, y) 형식으로 반환됨
+    # 1) DataLoader: (cid, x_seq, x_meta, y) 형식으로 반환
     train_loader, val_loader, test_loader, meta_info = create_stratified_dataloaders(
         time_series_df=time_series_df,
         meta_df=meta_df,
@@ -103,7 +94,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
     shap_path = ""
     result_path = ""
     attention_path = ""
-    attention_plot_path = ""  # 추가: Attention 시각화 결과 경로
+    attention_plot_path = ""
     history = []
 
     for epoch in range(config['epochs']):
@@ -117,8 +108,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
         for cid, x_seq, x_meta, y in tqdm(train_loader):
             x_seq, x_meta, y = x_seq.to(device), x_meta.to(device), y.to(device).float()
             optimizer.zero_grad()
-            # output, _ = model(x_seq, x_meta)
-            # loss = criterion(output.squeeze(), y)
+        
             output, _, meta_out = model(x_seq, x_meta)
             loss_main = criterion(output.squeeze(), y)
             loss_reg = torch.norm(meta_out, p=2)  # p=1로 바꾸면 L1 정규화
@@ -132,7 +122,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
 
         model.eval()
         y_true, y_pred = [], []
-        customer_ids = []       # ← 추가: 검증 시각에 고객 ID 수집
+        customer_ids = []    
         attention_list = []
 
         with torch.no_grad():
@@ -185,7 +175,6 @@ def train_model(config, time_series_df, meta_df, save_suffix):
             torch.save(model.state_dict(), save_path)
             print(f"[Saved] Best model saved with AUC: {best_auc:.4f} → {save_path}")
 
-            # 1) SHAP 입력 저장
             np.savez_compressed(
                 f"shap_input_{save_suffix}.npz",
                 x_seq=np.concatenate(shap_x_seq, axis=0),
@@ -197,9 +186,6 @@ def train_model(config, time_series_df, meta_df, save_suffix):
             shap_path = f"shap_input_{save_suffix}.npz"
             print(f"[Saved] SHAP input saved with feature names: {shap_path}")
 
-
-
-            # 2) 검증 예측 결과에 customer_id 추가
             result_path = f"val_preds_{save_suffix}.csv"
             with open(result_path, "w", newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
@@ -208,7 +194,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
                     writer.writerow([cid_val, true_val, pred_val])
             print(f"[Saved] Validation predictions (with customer_id) to: {result_path}")
 
-            # 3) Attention 저장
+            # Attention 저장
             attention_path = f"attention_{save_suffix}.npy"
             # attention_list: 리스트 안에 배치별 (batch_size, seq_len) 배열이 담겨 있음
             # 따라서 concatenate 하면 shape = (num_val_samples, seq_len)
@@ -216,7 +202,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
             np.save(attention_path, attention_all)
             print(f"[Saved] Attention weights saved to: {attention_path}")
 
-            # 4) Attention 시각화 (히트맵)
+            # Attention 시각화 (히트맵)
             # (1) 시퀀스 길이
             seq_len = attention_all.shape[1]
 
@@ -309,7 +295,7 @@ def train_model(config, time_series_df, meta_df, save_suffix):
         'val_pred_path': result_path,
         'shap_input_path': shap_path,
         'attention_path': attention_path,
-        'attention_plot_path': attention_plot_path  # 추가: 시각화 결과 경로
+        'attention_plot_path': attention_plot_path  
     }
 
 if __name__ == "__main__":
