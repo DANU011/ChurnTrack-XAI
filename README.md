@@ -10,14 +10,14 @@
 ## 구성 파일
 ```
 정규화 적용 버전/
-├── train_feature.py # 전체 학습 및 실행 스크립트
+├── train.py # 전체 학습 및 실행 스크립트
 ├── model.py # BiLSTM 기반 모델 정의
 ├── dataloader.py # 시계열 + 메타데이터 로딩 모듈
-├── shap_3.py # SHAP 기반 설명 모듈 v0
-├── inference_module.py # 저장된 모델을 활용한 예측 및 Attention 시각화 v0
+├── shap_4.py # SHAP 기반 설명 모듈 v0
+├── ig.py # Integrated Gradients 기반 피처 중요도 시각화 모듈
 ├── processed_time_series.csv # 월별 고객 시계열 데이터
 ├── meta_merged.csv # 고객별 정적 정보 및 이탈 여부
-├── requirements.txt # 프로젝트 실행 환경의 Python 패키지 목록
+└── requirements.txt # 프로젝트 실행 환경의 Python 패키지 목록
 ```
 ## 실행 방법
 ```bash
@@ -44,9 +44,11 @@ python train.py
 - FC Layer: 메타 데이터 임베딩
 - Classifier: Attention + Meta 정보 병합 → 최종 예측
 ```bash
-(Time-series) → BiLSTM → CNN → Attention →────────┐
-                                                  │concat
-(Meta features) → FC ReLU →───────────────────────┘→ FC → churn probability
+(Time-series) → BiLSTM → CNN → Attention ─────┐
+                                              ↓
+                                     Concatenate → FC → churn probability
+                                              ↑
+           (Meta features) → FC (ReLU) ───────┘
 ```
 ## 정규화 및 전처리 적용 사항
 - bool 타입 → float 변환
@@ -77,6 +79,7 @@ python train.py
 - 출력: `attention_heatmap_*.png`
 
 ## 모델 조합 가이드
+본 프로젝트는 다양한 구조의 모델 및 어텐션 메커니즘을 실험할 수 있도록 설계되어 있습니다. 정규화 적용 버전 외 모델 아키텍처 및 입력 구성을 변경할 때는 아래 기준에 따라 train_*.py, model_*.py, attention_module_*.py, dataloader_*.py 파일들을 조합하여 사용하십시오.
 | 실험 유형                | 훈련 스크립트                | 모델 정의 파일                        | 어텐션 모듈                                     | 데이터로더 파일                 |
 | -------------------- | ---------------------- | ------------------------------- | ------------------------------------------ | ------------------------ |
 | 기본 모델                | `train_customer_id.py` | `model.py`                      | `attention_module.py`                      | `dataloader.py`          |
@@ -84,6 +87,49 @@ python train.py
 | Gating 구조 실험         | `train_customer_id.py` | `model_gating.py`               | (내장 또는 기본 어텐션 사용)                          | `dataloader.py`          |
 | 시계열만 사용 (Seq-only)   | `train_seq_only.py`    | `model_seq_only.py`             | (어텐션 없음 또는 기본 어텐션)                         | `dataloader_seq_only.py` |
 
+SHAP / IG 해석 도구는 모든 모델 실험 후 `.pth` 모델 가중치를 불러와 분석 가능하며,  
+`shap_4.py`, `ig.py` 파일로 구성되어 있습니다.
+
+실험 목적에 맞는 `train_*.py` 스크립트를 사용하고,  
+내부에서 참조하는 모델과 데이터로더를 위 표에 맞게 조정하십시오.
+
+### 모델 아키텍쳐
+Meta-aware Attention 모델 구조
+```bash
+복사
+편집
+(Time-series) → BiLSTM → CNN ─────────────┐
+                                          ↓
+                      (Meta features) → FC (ReLU)
+                                          ↓
+                        Meta-aware Attention Layer
+                                          ↓
+                                     Concatenate → FC → churn probability
+```
+
+Gating 구조 모델
+```bash
+
+bash
+복사
+편집
+(Time-series) → BiLSTM → CNN → TS Representation ─────┐
+                                                      ↓
+         (Meta features) → FC (ReLU) → Gating Layer ──┘
+                                                      ↓
+                                           Combined Vector → FC → churn probability
+```
+
+시계열 전용 모델 (Seq-only)
+```bash
+복사
+편집
+(Time-series) → BiLSTM → CNN → Attention → FC → churn probability
+
+> 예시:  
+> Meta-aware Attention 실험을 하려면 `train_customer_id.py`에서  
+> `model_meta_aware_attention.py`와 `attention_module_meta_aware_attention.py`를 불러오도록 수정합니다.
+```
 
 ## 실행 환경
 아래 파일을 통해 본 프로젝트의 의존성 및 실행 환경을 확인할 수 있습니다:
