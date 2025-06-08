@@ -2,13 +2,14 @@
 
 # Customer Churn Prediction
 
-이 프로젝트는 카드 고객의 시계열 거래 데이터와 정적 메타 데이터를 기반으로, 6개월째 이탈 여부(`churn`)를 예측하는 LSTM 기반 모델입니다.
+본 프로젝트는 카드 고객의 월별 **시계열 거래 데이터**와 **정적 메타 정보**를 활용하여, **6개월째 고객 이탈 여부(`churn`)**를 예측하는 딥러닝 모델을 구현합니다.  
+모델의 **설명 가능성(XAI)** 강화를 위해 **SHAP**, **Integrated Gradients**, **Attention Heatmap** 분석 도구를 포함합니다.
 
 ---
 
 ## 구성 파일
 ```
-.
+정규화 적용 버전/
 ├── train_feature.py # 전체 학습 및 실행 스크립트
 ├── model.py # BiLSTM 기반 모델 정의
 ├── dataloader.py # 시계열 + 메타데이터 로딩 모듈
@@ -26,16 +27,51 @@ python train.py
 
 ### 1. `processed_time_series.csv`
 - 고객 ID별 월 단위 시계열 거래 특성 포함
+- 총 5개월치 window 기반 학습 (예: 2018.07 ~ 2018.11 → 2018.12 이탈 예측)
 
 ### 2. `meta_merged.csv`
-- 고객별 정적 속성 (성별, 연령, 카드 등급 등) 및 `churn` 레이블 포함
+- 고객별 정적 속성 (성별, 연령, 카드 등급 등)
+- `churn` 레이블 포함
+- 클래스 불균형 해소를 위한 1:1 언더샘플링 처리
 
 ---
 
 ## 모델 개요
-- LSTM으로 시계열 정보 학습
-- CNN으로 로컬 패턴 추출
-- Attention으로 시점별 중요도 가중치 적용
-- 정적 메타 정보와 병합 후 최종 이탈 여부 예측
+- BiLSTM: 시계열의 양방향 패턴 학습
+- 1D CNN: 로컬 패턴 추출
+- Attention: 시점별 중요도 가중합
+- FC Layer: 메타 데이터 임베딩
+- Classifier: Attention + Meta 정보 병합 → 최종 예측
+```bash
+(Time-series) → BiLSTM → CNN → Attention →────────┐
+                                                  │concat
+(Meta features) → FC ReLU →───────────────────────┘→ FC → churn probability
+```
+## 정규화 및 전처리 적용 사항
+- bool 타입 → float 변환
+- 결측값 보간: 시계열은 ffill + 0 대체, 메타는 중간값 대체
+- 메타 임베딩에 대한 L2 정규화 항 추가 (meta_reg_lambda
 
+## XAI 기능 구성
+
+### SHAP (`shap.py`)
+- KernelExplainer 기반
+- 시계열 / 메타 피처 중요도 분리 시각화
+- 출력:  
+  - `shap_summary_seq_all_l2.png`  
+  - `shap_summary_meta_all_l2.png`
+
+### Integrated Gradients (`ig.py`)
+- Captum 기반
+- False Positive, False Negative 외에도 **중간 확률(MID)**, **높은 확률(HIGH)** 그룹까지 분석
+- 각 그룹별 **Top-10 중요 피처 시각화**
+- 출력 파일:
+  - `ig_meta_top10_FP_l1_v2.png`, `ig_seq_top10_FP_l1_v2.png`
+  - `ig_meta_top10_FN_l1_v2.png`, `ig_seq_top10_FN_l1_v2.png`
+  - `ig_meta_top10_MID_l1_v2.png`, `ig_seq_top10_MID_l1_v2.png`
+  - `ig_meta_top10_HIGH_l1_v2.png`, `ig_seq_top10_HIGH_l1_v2.png`
+
+### Attention Heatmap (`train.py`)
+- Validation 전체 평균 attention 시각화
+- 출력: `attention_heatmap_*.png`
 ---
