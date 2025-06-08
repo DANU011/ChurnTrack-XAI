@@ -84,8 +84,8 @@ python train.py
 | -------------------- | ---------------------- | ------------------------------- | ------------------------------------------ | ------------------------ |
 | 기본 모델                | `train_customer_id.py` | `model.py`                      | `attention_module.py`                      | `dataloader.py`          |
 | Meta-aware Attention | `train_customer_id.py` | `model_meta_aware_attention.py` | `attention_module_meta_aware_attention.py` | `dataloader.py`          |
-| Gating 구조 실험         | `train_customer_id.py` | `model_gating.py`               | (내장 또는 기본 어텐션 사용)                          | `dataloader.py`          |
-| 시계열만 사용 (Seq-only)   | `train_seq_only.py`    | `model_seq_only.py`             | (어텐션 없음 또는 기본 어텐션)                         | `dataloader_seq_only.py` |
+| Gating 구조 실험         | `train_customer_id.py` | `model_gating.py`               | `attention_module.py`                          | `dataloader.py`          |
+| 시계열만 사용 (Seq-only)   | `train_seq_only.py`    | `model_seq_only.py`             | `attention_module.py`                         | `dataloader_seq_only.py` |
 
 SHAP / IG 해석 도구는 모든 모델 실험 후 `.pth` 모델 가중치를 불러와 분석 가능하며,  
 `shap_4.py`, `ig.py` 파일로 구성되어 있습니다.
