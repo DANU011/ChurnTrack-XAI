@@ -10,14 +10,15 @@
 ## 구성 파일
 ```
 정규화 적용 버전/
-├── train.py # 전체 학습 및 실행 스크립트
-├── model.py # BiLSTM 기반 모델 정의
-├── dataloader.py # 시계열 + 메타데이터 로딩 모듈
-├── shap.py # SHAP 기반 설명 모듈
-├── ig.py # Integrated Gradients 기반 피처 중요도 시각화 모듈
-├── processed_time_series.csv # 월별 고객 시계열 데이터
-├── meta_merged.csv # 고객별 정적 정보 및 이탈 여부
-└── requirements.txt # 프로젝트 실행 환경의 Python 패키지 목록
+├── train.py                  # 전체 학습 및 실행 스크립트
+├── model.py                 # BiLSTM + CNN + Attention + Meta FC 모델 정의
+├── dataloader.py           # 시계열 및 메타데이터 전처리 및 DataLoader 구성
+├── shap.py                 # SHAP 기반 피처 중요도 분석 및 시각화
+├── ig.py                   # Integrated Gradients 기반 피처 중요도 시각화 모듈
+├── attention_module.py     # 시계열 Attention score 가중합 계산 모듈
+├── processed_time_series.csv  # 월별 고객 시계열 데이터 (예: 이용금액, 사용건수 등)
+├── meta_merged.csv         # 고객별 정적 속성 (성별, 연령, 카드등급 등) 및 이탈 레이블 포함
+└── requirements.txt        # 프로젝트 실행에 필요한 Python 패키지 목록
 ```
 ## 실행 방법
 ```bash
