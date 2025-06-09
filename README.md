@@ -111,11 +111,12 @@ Meta-aware Attention 모델 구조
 
 Gating 구조 모델
 ```bash
-(Time-series) → BiLSTM → CNN → TS Representation ─────┐
+(Time-series) → BiLSTM → CNN ─────────────────────────┐
                                                       ↓
-         (Meta features) → FC (ReLU) → Gating Layer ──┘
+         (Meta features) → FC (ReLU) → FC → sigmoid ──┘
                                                       ↓
-                                           Combined Vector → FC → churn probability
+           Element-wise Multiplication (Gating ⊙) → Attention → FC → churn probability
+
 ```
 
 시계열 전용 모델 (Seq-only)
