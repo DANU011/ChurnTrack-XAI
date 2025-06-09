@@ -57,7 +57,7 @@ python train.py
 
 ## XAI 기능 구성
 
-### SHAP (`shap_4.py`)
+### SHAP (`shap.py`)
 - KernelExplainer 기반
 - 시계열 / 메타 피처 중요도 분리 시각화
 - 출력:  
@@ -74,7 +74,7 @@ python train.py
   - `ig_meta_top10_MID_l1_v2.png`, `ig_seq_top10_MID_l1_v2.png`
   - `ig_meta_top10_HIGH_l1_v2.png`, `ig_seq_top10_HIGH_l1_v2.png`
 
-### Attention Heatmap (`train_customer_id.py`)
+### Attention Heatmap (`train.py`)
 - Validation 전체 평균 attention 시각화
 - 출력: `attention_heatmap_*.png`
 
