@@ -86,6 +86,7 @@ python train.py
 | Meta-aware Attention | `train_customer_id.py` | `model_meta_aware_attention.py` | `attention_module_meta_aware_attention.py` | `dataloader.py`          |
 | Gating 구조 실험         | `train_customer_id.py` | `model_gating.py`               | `attention_module.py`                          | `dataloader.py`          |
 | 시계열만 사용 (Seq-only)   | `train_seq_only.py`    | `model_seq_only.py`             | `attention_module.py`                         | `dataloader_seq_only.py` |
+| Phase 학습 실험         | `train_phase.py`         | `model.py`      | `attention_module.py`     | `dataloader.py`              |
 
 SHAP / IG 해석 도구는 모든 모델 실험 후 `.pth` 모델 가중치를 불러와 분석 가능하며,  
 `shap_4.py`, `ig.py` 파일로 구성되어 있습니다.
@@ -122,7 +123,21 @@ Gating 구조 모델
 (Time-series) → BiLSTM → CNN → Attention → FC → churn probability
 ```
 
+Phase 학습 실험 구조 (3단계: 시계열-only → 메타-only → 전체 fine-tuning)
+```bash
+Phase 1: 시계열 전용 학습
+(Time-series) → BiLSTM → CNN → Attention → FC → churn probability
 
+Phase 2: 메타 전용 학습
+(Meta features) → FC (ReLU) → FC → churn probability
+
+Phase 3: 통합 모델 fine-tuning
+(Time-series) → BiLSTM → CNN → Attention ─────┐
+                                              ↓
+                                     Concatenate → FC → churn probability
+                                              ↑
+           (Meta features) → FC (ReLU) ───────┘
+```
 
 ## 실행 환경
 아래 파일을 통해 본 프로젝트의 의존성 및 실행 환경을 확인할 수 있습니다:
