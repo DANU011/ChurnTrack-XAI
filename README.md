@@ -178,7 +178,7 @@ Phase 3: 통합 모델 fine-tuning
 ## 실행 환경
 아래 파일을 통해 본 프로젝트의 의존성 및 실행 환경을 확인할 수 있습니다:
 
-- [`requirements.txt`](./정규화 적용 버전/requirements.txt)  
+- [`requirements.txt`](정규화 적용 버전/requirements.txt)  
   → 주요 패키지:
   - `torch==2.5.1+cu121`
   - `torchvision==0.20.1+cu121`
