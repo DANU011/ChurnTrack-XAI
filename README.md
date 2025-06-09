@@ -10,8 +10,8 @@
 ## 구성 파일
 ```
 정규화 적용 버전/
-├── train.py                  # 전체 학습 및 실행 스크립트
-├── model.py                 # BiLSTM + CNN + Attention + Meta FC 모델 정의
+├── train.py                # 전체 학습 및 실행 스크립트
+├── model.py                # BiLSTM + CNN + Attention + Meta FC 모델 정의
 ├── dataloader.py           # 시계열 및 메타데이터 전처리 및 DataLoader 구성
 ├── shap.py                 # SHAP 기반 피처 중요도 분석 및 시각화
 ├── ig.py                   # Integrated Gradients 기반 피처 중요도 시각화 모듈
