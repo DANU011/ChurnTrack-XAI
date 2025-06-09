@@ -26,7 +26,7 @@ python train.py
 ## 데이터 출처 및 피처 선정
 
 본 프로젝트는 **AI허브**에서 제공하는  
-[금융 합성 데이터셋](https://www.aihub.or.kr/aihubdata/data/view.do?searchKeyword=%EA%B8%88%EC%9C%B5&aihubDataSe=data&dataSetSn=71792)을 기반으로 구축되었습니다.
+[금융 합성 데이터](https://www.aihub.or.kr/aihubdata/data/view.do?searchKeyword=%EA%B8%88%EC%9C%B5&aihubDataSe=data&dataSetSn=71792)을 기반으로 구축되었습니다.
 
 해당 데이터셋은 카드사에서 수집한 월별 승인매출정보, 청구정보, 잔액정보, 회원정보 등을 포함하고 있습니다.
 
