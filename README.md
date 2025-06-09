@@ -13,7 +13,7 @@
 ├── train.py # 전체 학습 및 실행 스크립트
 ├── model.py # BiLSTM 기반 모델 정의
 ├── dataloader.py # 시계열 + 메타데이터 로딩 모듈
-├── shap.py # SHAP 기반 설명 모듈 v0
+├── shap.py # SHAP 기반 설명 모듈
 ├── ig.py # Integrated Gradients 기반 피처 중요도 시각화 모듈
 ├── processed_time_series.csv # 월별 고객 시계열 데이터
 ├── meta_merged.csv # 고객별 정적 정보 및 이탈 여부
