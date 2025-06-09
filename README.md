@@ -104,10 +104,10 @@ EDA(탐색적 데이터 분석)를 통해 다음과 같은 전처리 및 피처 
 - False Positive, False Negative 외에도 **중간 확률(MID)**, **높은 확률(HIGH)** 그룹까지 분석
 - 각 그룹별 **Top-10 중요 피처 시각화**
 - 출력 파일:
-  - `ig_meta_top10_FP_l1_v2.png`, `ig_seq_top10_FP_l1_v2.png`
-  - `ig_meta_top10_FN_l1_v2.png`, `ig_seq_top10_FN_l1_v2.png`
-  - `ig_meta_top10_MID_l1_v2.png`, `ig_seq_top10_MID_l1_v2.png`
-  - `ig_meta_top10_HIGH_l1_v2.png`, `ig_seq_top10_HIGH_l1_v2.png`
+  - `ig_meta_top10_FP_l2_v2.png`, `ig_seq_top10_FP_l2_v2.png`
+  - `ig_meta_top10_FN_l2_v2.png`, `ig_seq_top10_FN_l2_v2.png`
+  - `ig_meta_top10_MID_l2_v2.png`, `ig_seq_top10_MID_l2_v2.png`
+  - `ig_meta_top10_HIGH_l2_v2.png`, `ig_seq_top10_HIGH_l2_v2.png`
 
 ### Attention Heatmap (`train.py`)
 - Validation 전체 평균 attention 시각화
