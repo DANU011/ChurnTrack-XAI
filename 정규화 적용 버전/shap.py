@@ -56,8 +56,7 @@ model_input = torch.cat([x_seq.reshape(len(x_seq), -1), x_meta], dim=1)
 model_input_np = model_input.numpy()
 
 # 6. Background 설정
-bg_n = min(100, model_input_np.shape[0])
-background = model_input_np[:bg_n]
+background = model_input_np
 
 # 7. SHAP 계산
 explainer = shap.KernelExplainer(model_fn, background)
