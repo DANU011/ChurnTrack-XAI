@@ -10,6 +10,7 @@
 ## 구성 파일
 ```
 정규화 적용 버전/
+├── eda_preprocessing.ipynb # eda 및 preprocessing
 ├── train.py                # 전체 학습 및 실행 스크립트
 ├── model.py                # BiLSTM + CNN + Attention + Meta FC 모델 정의
 ├── dataloader.py           # 시계열 및 메타데이터 전처리 및 DataLoader 구성
