@@ -199,7 +199,6 @@ Phase 3: 통합 모델 fine-tuning
 | GPU    | NVIDIA L40S × 2 (각 46GB, 총 92GB)              |
 | RAM    | 93GB                                           |
 | CUDA   | 12.1                                           |
-| Swap   | 없음                                           |
 
 > 본 프로젝트는 **CUDA 12.1** 환경에서 실행되었으며, PyTorch는 `+cu121` 빌드를 사용합니다.
 > `nvidia-smi` 기준 GPU 드라이버 버전은 **535.113 이상**을 권장합니다.
