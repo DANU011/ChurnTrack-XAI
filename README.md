@@ -182,8 +182,6 @@ Phase 3: 통합 모델 fine-tuning
 - [`requirements.txt`](정규화%20적용%20버전/requirements.txt)  
   → 주요 패키지:
   - `torch==2.5.1+cu121`
-  - `torchvision==0.20.1+cu121`
-  - `torchaudio==2.5.1+cu121`
   - `shap==0.47.2`
   - `captum==0.8.0`
   - `scikit-learn==1.6.1`
